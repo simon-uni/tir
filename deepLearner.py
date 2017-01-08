@@ -4,6 +4,7 @@ from itertools import product
 import re
 import ipdb
 import gensim
+from math import log
 
 # settings collected here
 dataDirName = '../Data'
@@ -74,3 +75,39 @@ def train():
     #print(next(iter(sentences)))
 
 # calculate all metrics
+def metrics(word):
+    for m in model:
+        basemodel = gensim.models.Word2Vec.load(os.path.join(modelDir,
+                                                             '5-500-' + str(m)))
+        baselist, _ = zip(*basemodel.most_similar(positive=word)) 
+        for n in (product(windows, sizes)):
+            print('{0} window, {1} layers, '.format(*n) + ('CBOW' if m == 0
+                                                           else 'skip-gram'))
+            othermodel = gensim.models.Word2Vec.load(os.path.join(modelDir,
+                                                             '{0}-{1}-'.format(*n)
+                                                             + str(m)))
+            otherlist, _ = zip(*othermodel.most_similar(positive=word))
+            # precision@5
+            prec = set(baselist[0:5]).intersection(set(otherlist[0:5]))
+            print('precision@5=\t'+str(len(prec)/5.0))
+            # recall
+            recall = set(baselist[0:10]).intersection(set(otherlist[0:10]))
+            print('recall=\t\t'+str(len(recall)/10.0))
+            # ndcg@10
+            sum=0
+            for i in range(0,9):
+                if(otherlist[i] in baselist[0:5]):
+                    sum+=(2^2 - 1)/log(i+1+1)
+                if(otherlist[i] in baselist[5:10]):
+                    sum+=(2^1 - 1)/log(i+1+1)
+            print('NDCG@10=\t' + str(sum))
+
+            # MAP
+            prec=j=0
+            for i in range(0,9):
+                if(otherlist[i] in baselist[0:(i+1)]):
+                    j+=1
+                    prec += len(set(baselist[0:(i+1)]).intersection(set(otherlist[0:(i+1)])))/float(i+1)
+            print('MAP=\t\t' + str(prec/float(j) if j!= 0 else 0))
+
+metrics('obama')
