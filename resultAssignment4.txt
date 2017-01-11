@@ -1,0 +1,44 @@
+earthquake
+5 window, 100 layers, CBOW
+precision@5=	0.6
+recall=		0.7
+NDCG@10=	12.917449486736162
+MAP=		0.8583333333333332
+5 window, 300 layers, CBOW
+precision@5=	0.8
+recall=		0.8
+NDCG@10=	14.075107341214991
+MAP=		0.9464285714285715
+5 window, 100 layers, skip-gram
+precision@5=	0.8
+recall=		0.8
+NDCG@10=	14.655005674398268
+MAP=		0.9305555555555555
+5 window, 300 layers, skip-gram
+precision@5=	0.8
+recall=		0.8
+NDCG@10=	15.00969629583502
+MAP=		0.9398148148148149
+
+
+diabetes
+5 window, 100 layers, CBOW
+precision@5=	0.8
+recall=		0.7
+NDCG@10=	13.818662717202285
+MAP=		0.8155555555555555
+5 window, 300 layers, CBOW
+precision@5=	0.6
+recall=		0.8
+NDCG@10=	14.249978771752579
+MAP=		0.8506944444444444
+5 window, 100 layers, skip-gram
+precision@5=	0.4
+recall=		0.6
+NDCG@10=	11.485887911434583
+MAP=		0.6904761904761904
+5 window, 300 layers, skip-gram
+precision@5=	0.8
+recall=		0.8
+NDCG@10=	15.46481590914844
+MAP=		0.975

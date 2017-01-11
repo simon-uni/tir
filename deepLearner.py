@@ -5,15 +5,16 @@ import re
 import ipdb
 import gensim
 from math import log
+from sys import argv
 
 # settings collected here
 dataDirName = '../Data'
 cleanedDir = '../CleanData'
 modelDir = '../Models'
 sentences = []
-windows = [2,3,5] 
-sizes = [100,200,500]
-model = [0,1]
+windows = [5] 
+sizes = [100,300]
+models = [0,1]
 min_count = 5
 worker = 3
 
@@ -63,7 +64,7 @@ class MySentences():
 
 # train by applying all parameter combinations to the data
 def train():
-    for n in (product(windows, sizes, model)):
+    for n in (product(windows, sizes, models)):
         sentences = MySentences(cleanedDir) # a memory-friendly iterator
         model = gensim.models.word2vec.Word2Vec(sentences, size=n[1], window=n[0],
                                                 min_count=min_count,
@@ -74,9 +75,18 @@ def train():
     #    print(n[0])
     #print(next(iter(sentences)))
 
+def trainAssignment():
+    sentences = MySentences('/home/swingert/workspace/newModels') # a memory-friendly iterator
+    model = gensim.models.word2vec.Word2Vec(sentences)
+    similar, _ = zip(*model.most_similar(positive=argv[1:], topn = 5))
+    print('%s' % ' '.join(similar))
+
+#trainAssignment()
+
 # calculate all metrics
 def metrics(word):
-    for m in model:
+    print(word)
+    for m in models:
         basemodel = gensim.models.Word2Vec.load(os.path.join(modelDir,
                                                              '5-500-' + str(m)))
         baselist, _ = zip(*basemodel.most_similar(positive=word)) 
@@ -110,4 +120,5 @@ def metrics(word):
                     prec += len(set(baselist[0:(i+1)]).intersection(set(otherlist[0:(i+1)])))/float(i+1)
             print('MAP=\t\t' + str(prec/float(j) if j!= 0 else 0))
 
-metrics('obama')
+metrics('earthquake')
+metrics('diabetes')
